@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+const API = import.meta.env.VITE_API_URL;
 
-const API = "http://127.0.0.1:8000";
-
+const login = () => {
+    window.location.href = `${API}/auth/login`;
+};
 export default function Analytics() {
   const [data, setData] = useState(null);
 
