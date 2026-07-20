@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
-const API = "http://127.0.0.1:8000";
+const API_URL = import.meta.env.VITE_API_URL;
+
+const login = () => {
+    window.location.href = `${API_URL}/auth/login`;
+};
 
 export default function AIReview() {
 
