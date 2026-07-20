@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-const API = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const login = () => {
-    window.location.href = `${API}/auth/login`;
+    window.location.href = `${API_URL}/auth/login`;
 };
 export default function Analytics() {
   const [data, setData] = useState(null);
