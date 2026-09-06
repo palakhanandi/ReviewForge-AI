@@ -26,7 +26,7 @@ app.add_middleware(
     CORSMiddleware,
      allow_origins=[
         "http://localhost:5173",
-        https://reviewforge-ai-2.onrender.com/,
+        "https://reviewforge-ai-2.onrender.com/",
     ],
     allow_credentials=True,
     allow_methods=["*"],
