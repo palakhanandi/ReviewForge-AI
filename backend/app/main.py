@@ -24,7 +24,10 @@ app.include_router(profile_router)
 app.include_router(dashboard_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+     allow_origins=[
+        "http://localhost:5173",
+        https://reviewforge-ai-2.onrender.com/,
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
