@@ -1,4 +1,4 @@
-```python
+
 import os
 
 from fastapi import FastAPI
@@ -59,4 +59,3 @@ app.include_router(webhook.router)
 app.include_router(ai.router)
 app.include_router(profile_router)
 app.include_router(dashboard_router)
-```
