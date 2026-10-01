@@ -1,71 +1,84 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import "../App.css";
+```jsx
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import api from "../api"; // change path if your api.js is in a different folder
 
-export default function Profile() {
+const API_URL = import.meta.env.VITE_API_URL;
 
-    const [user, setUser] = useState(null);
+export default function AIReview() {
+    const [params] = useSearchParams();
+
+    const owner = params.get("owner");
+    const repo = params.get("repo");
+    const pr = params.get("pr");
+
+    const [loading, setLoading] = useState(true);
+    const [review, setReview] = useState("");
+
+    const hasGenerated = useRef(false);
+
+    // GitHub login
+    const login = () => {
+        window.location.href = `${API_URL}/auth/login`;
+    };
 
     useEffect(() => {
-        loadProfile();
+        if (hasGenerated.current) return;
+
+        hasGenerated.current = true;
+
+        generateReview();
     }, []);
 
-    async function loadProfile() {
-
-        const token = localStorage.getItem("token");
-
+    const generateReview = async () => {
         try {
-
-            const res = await axios.get(
-                "http://127.0.0.1:8000/profile",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.post(
+                `/ai/review/${owner}/${repo}/${pr}`,
+                {}
             );
 
-            setUser(res.data);
+            setReview(response.data.review);
 
         } catch (err) {
-            console.log(err);
-        }
-    }
+            console.error("AI Review Error:", err);
 
-    if (!user) {
-        return <h2 style={{ color: "white" }}>Loading Profile...</h2>;
-    }
+            if (err.response?.status === 401) {
+                alert("Please login first.");
+                login();
+                return;
+            }
+
+            alert("Unable to generate AI Review.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div className="profile-container">
+        <div className="page">
 
-            <h1 className="profile-title">
-                GitHub Profile
-            </h1>
+            <h1>🤖 AI Code Review</h1>
 
-            <div className="profile-card">
+            <p>
+                <b>Repository:</b> {owner}/{repo}
+            </p>
 
-                <img
-                    src={user.avatar}
-                    alt="Avatar"
-                    className="profile-avatar"
-                />
+            <p>
+                <b>Pull Request:</b> #{pr}
+            </p>
 
-                <div className="profile-info">
+            <br />
 
-                    <h2>{user.name || "No Name"}</h2>
-
-                    <h3>@{user.username}</h3>
-
-                    <p>{user.email || "Email not public"}</p>
-
-                    
-
-                    
+            {loading ? (
+                <h2>Generating AI Review...</h2>
+            ) : (
+                <div className="review-box">
+                    <h2>Gemini Review</h2>
+                    <pre>{review}</pre>
                 </div>
-
-            </div>
+            )}
 
         </div>
     );
 }
+```
