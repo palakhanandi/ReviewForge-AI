@@ -1,15 +1,11 @@
+
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api"; // change path if your api.js is in a different folder
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const login = () => {
-    window.location.href = `${API_URL}/auth/login`;
-};
-
 export default function AIReview() {
-
     const [params] = useSearchParams();
 
     const owner = params.get("owner");
@@ -19,46 +15,43 @@ export default function AIReview() {
     const [loading, setLoading] = useState(true);
     const [review, setReview] = useState("");
 
-    // Prevent duplicate execution
     const hasGenerated = useRef(false);
 
-    useEffect(() => {
+    // GitHub login
+    const login = () => {
+        window.location.href = `${API_URL}/auth/login`;
+    };
 
+    useEffect(() => {
         if (hasGenerated.current) return;
 
         hasGenerated.current = true;
 
         generateReview();
-
     }, []);
 
     const generateReview = async () => {
-
         try {
-
-            const token = localStorage.getItem("token");
-
-            const response = await axios.post(
-                `${API}/ai/review/${owner}/${repo}/${pr}`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+            const response = await api.post(
+                `/ai/review/${owner}/${repo}/${pr}`,
+                {}
             );
 
             setReview(response.data.review);
 
         } catch (err) {
+            console.error("AI Review Error:", err);
 
-            console.log(err);
+            if (err.response?.status === 401) {
+                alert("Please login first.");
+                login();
+                return;
+            }
+
             alert("Unable to generate AI Review.");
-
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
-
     };
 
     return (
@@ -66,9 +59,13 @@ export default function AIReview() {
 
             <h1>🤖 AI Code Review</h1>
 
-            <p><b>Repository:</b> {owner}/{repo}</p>
+            <p>
+                <b>Repository:</b> {owner}/{repo}
+            </p>
 
-            <p><b>Pull Request:</b> #{pr}</p>
+            <p>
+                <b>Pull Request:</b> #{pr}
+            </p>
 
             <br />
 
@@ -83,5 +80,3 @@ export default function AIReview() {
 
         </div>
     );
-
-}
