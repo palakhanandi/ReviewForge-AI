@@ -5,6 +5,8 @@ python-multipart
 sqlalchemy
 psycopg2-binary
 requests
+psycopg[binary]
+psycopg2-binary
 httpx
 Authlib
 itsdangerous
