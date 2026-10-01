@@ -1,4 +1,4 @@
-```jsx
+
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import api from "../api"; // change path if your api.js is in a different folder
@@ -80,5 +80,3 @@ export default function AIReview() {
 
         </div>
     );
-}
-```
